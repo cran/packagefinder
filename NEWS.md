@@ -1,3 +1,13 @@
+# packagefinder 0.1.5
+
+## Minor changes
+
+* New function fp() as short alias for findPackage().
+* New argument advanced.ranking (default: TRUE) in function findPackage() enables a more sophisticated ranking of search results that takes into account the relative frequencies of the different search terms across the packages and the length of the matches relative to the text they were found in. 
+
+
+
+
 # packagefinder 0.1.1
 
 ## Bug fixes

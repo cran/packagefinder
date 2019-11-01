@@ -5,9 +5,9 @@
 \title{Searching for packages on CRAN}
 \usage{
 findPackage(keywords, mode = "or", case.sensitive = FALSE,
-  always.sensitive = NULL, weights = c(1, 2, 1, 2), display = "viewer",
+  always.sensitive = NULL, weights = c(2, 2, 1, 2), display = "viewer",
   results.longdesc = FALSE, limit.results = 15, silent = FALSE,
-  index = NULL)
+  index = NULL, advanced.ranking = TRUE)
 }
 \arguments{
 \item{keywords}{A vector of keywords to be searched for.}
@@ -29,6 +29,8 @@ findPackage(keywords, mode = "or", case.sensitive = FALSE,
 \item{silent}{Indicates whether details of the user's search query are repeated in the console.}
 
 \item{index}{Either a path (or URL) to a search index, or a search index that is already loaded. If no index is provided, \code{findPackage()} creates an ad hoc search index.}
+
+\item{advanced.ranking}{Indicates if the ranking of search results shall be based on weights taking into account the inverse frequencies of the different search terms across all packages and the length of the matches relative to the texts they were found in. Usually, using advanced ranking (\code{advanced.ranking = TRUE}, default) gives more relevant results, especially in \code{"or"} mode when the search terms differ strongly in their frequency of occurrence across packages.}
 }
 \value{
 No return value.
@@ -40,6 +42,8 @@ Searches for packages on CRAN based on the user's specification of search terms.
 The \code{GO} column in the search results is an index number that can be used to address the found package easily with the \code{go()} function.
 The \code{DOWNL_TOTAL} column in the search results gives the overall number of downloads of the respective package since its submission to CRAN. The number is based on the figures for the RStudio CRAN mirror server.
 This field is only provided if the search index contains download figures. Ad hoc indices (when \code{index = NULL}) never include download statistics. Please refer to \code{\link{buildIndex}()} for more details.
+
+\code{\link{fp}()} is a shorter alias for \code{\link{findPackage}()}.
 }
 \examples{
 \donttest{
