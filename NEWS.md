@@ -1,3 +1,13 @@
+# packagefinder 0.2.0
+
+# Major changes
+
+* search terms can consist of full queries like "meta AND regression"
+* New display mode "browser" to view results in web browser
+* findPackage() can return search results as dataframe
+
+
+
 # packagefinder 0.1.5
 
 ## Minor changes
