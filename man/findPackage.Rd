@@ -20,7 +20,7 @@ findPackage(keywords, mode = "or", case.sensitive = FALSE,
 
 \item{weights}{A numeric vector describing how search hits in different fields of the a package's data shall be weighted. The first three elements of the vector are the weights assigned to hits in the package's \emph{title}, \emph{short description} and \emph{long description}, respectively. The fourth element is a factor applied to the overall score of a search hit if all search terms from the \code{keywords} argument are found (obviously only meaningful in \code{"or"} mode). All weights must be 1 or larger.}
 
-\item{display}{Describes where the search results shall be shown. Either \code{"viewer"}, \code{"console"} or \code{"browser"}. If \code{"viewer"}, the results are shown in RStudio's Viewer pane if the RStudio IDE is being used. If \code{results = "console"} the search results are shown as a text table in the R console. \code{results = "browser"} shows the search results in the web browser.}
+\item{display}{Describes where the search results shall be shown. Either \code{"viewer"}, \code{"console"} or \code{"browser"}. If \code{"viewer"}, the results are shown in RStudio's Viewer pane if the RStudio IDE is being used. If \code{results = "console"} the search results are shown as a text table in the R console. \code{results = "browser"} shows the search results in the web browser (currently only available on Windows-based platforms).}
 
 \item{results.longdesc}{Indicates whether the packages' long descriptions shall also be included in the search results. Given the length of some long decsriptions this may make the search results harder to read.}
 
@@ -58,7 +58,8 @@ searchindex <- buildIndex()
 findPackage(keywords=c("regression", "linear"), mode="and",
    always.sensitive="GLM", index=searchindex)
 
-findPackage("meta and regression", display="browser")
+# Or in the browser (Windows only):
+# findPackage("meta and regression", display="browser")
 
 my.results <- findPackage("meta AND regression")
 }

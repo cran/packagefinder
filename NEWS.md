@@ -1,3 +1,12 @@
+# packagefinder 0.2.1
+
+# Bug fixes
+
+* Version check at startup removed as this was causing problems on some systems
+* Availability of 'browser' display option limited to Windows-based systems because it caused trouble on Linux-/Unix-based systems
+
+
+
 # packagefinder 0.2.0
 
 # Major changes

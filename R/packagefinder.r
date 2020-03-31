@@ -31,16 +31,13 @@ NULL
 ###   PACKAGE PACKAGEFINDER
 ###
 ###   Author and maintainer: Joachim Zuckarelli (joachim@zuckarelli.de)
-###   Version 0.2.0
+###   Version 0.2.1
 ###
 
 
 
 .onAttach <- function(libname, pkgname){
-  packageStartupMessage(crayon::blue("You are working with", crayon::bold("\npackagefinder"), "version 0.2.0\n"))
-  pf<-tools::CRAN_package_db()
-  if(numeric_version(pf$Version[pf$Package=="packagefinder"]) < numeric_version(utils::packageVersion("packagefinder"))) packageStartupMessage(crayon::red("Please update packagefinder to the newest version", numeric_version(pf$Version[pf$Package=="packagefinder"]), "!\n\n"))
-  else packageStartupMessage("\n")
+  packageStartupMessage(crayon::blue("You are working with", crayon::bold("packagefinder"), "version 0.2.1\n\n"))
   packageStartupMessage(crayon::green("Getting started:\n\n"))
   packageStartupMessage(crayon::silver("* Use", crayon::cyan("findPackage(keywords, mode)"), "to search CRAN for packages, e.g.",crayon::italic("findPackage(c(\"meta\",\"regression\"), \"and\")")," or just ", crayon::italic("findPackage(\"meta and regression\")"),".\n\n"), sep="")
   packageStartupMessage(crayon::silver("* Use", crayon::cyan("exploreFields(fields, term)"),"to search a term in the specified fields, e.g.", crayon::italic("exploreFields(c(\"Package\", \"Title\"), \"logistic\").\n\n")), sep="")
@@ -195,7 +192,7 @@ buildIndex <- function(filename="", download.stats = FALSE) {
 #' @param case.sensitive Indicates if the search shall be case sensitive, or not.
 #' @param always.sensitive A vector of search terms for which capitalization is always considered relevant (even if \code{case.sensitive = FALSE}). This allows to better reflect abbreviations like 'GLM'.
 #' @param weights A numeric vector describing how search hits in different fields of the a package's data shall be weighted. The first three elements of the vector are the weights assigned to hits in the package's \emph{title}, \emph{short description} and \emph{long description}, respectively. The fourth element is a factor applied to the overall score of a search hit if all search terms from the \code{keywords} argument are found (obviously only meaningful in \code{"or"} mode). All weights must be 1 or larger.
-#' @param display Describes where the search results shall be shown. Either \code{"viewer"}, \code{"console"} or \code{"browser"}. If \code{"viewer"}, the results are shown in RStudio's Viewer pane if the RStudio IDE is being used. If \code{results = "console"} the search results are shown as a text table in the R console. \code{results = "browser"} shows the search results in the web browser.
+#' @param display Describes where the search results shall be shown. Either \code{"viewer"}, \code{"console"} or \code{"browser"}. If \code{"viewer"}, the results are shown in RStudio's Viewer pane if the RStudio IDE is being used. If \code{results = "console"} the search results are shown as a text table in the R console. \code{results = "browser"} shows the search results in the web browser (currently only available on Windows-based platforms).
 #' @param results.longdesc Indicates whether the packages' long descriptions shall also be included in the search results. Given the length of some long decsriptions this may make the search results harder to read.
 #' @param limit.results The maximum number of matches presented in the search results; choose a negative number to display all results
 #' @param silent Indicates whether details of the user's search query are repeated in the console.
@@ -226,7 +223,8 @@ buildIndex <- function(filename="", download.stats = FALSE) {
 #' findPackage(keywords=c("regression", "linear"), mode="and",
 #'    always.sensitive="GLM", index=searchindex)
 #'
-#' findPackage("meta and regression", display="browser")
+#' # Or in the browser (Windows only):
+#' # findPackage("meta and regression", display="browser")
 #'
 #' my.results <- findPackage("meta AND regression")
 #' }
@@ -254,6 +252,11 @@ findPackage<-function(keywords, mode = "or", case.sensitive = FALSE, always.sens
     else {
       mode.param <- "or"
       other.mode <- "and"
+    }
+
+    if(.Platform$OS.type != "windows" & display == "browser") {
+      warning("\nThe 'browser' option for argument 'display' is currently only available on Windows-based systems. Using 'viewer' instead.\n")
+      display <- "viewer"
     }
 
     msg<-"Your are searching packages for the terms"
@@ -550,7 +553,7 @@ showResults <- function(res, display, results.longdesc, skip.downloads) {
       if(tolower(display)=="browser") {
         html.viewHTML()
       } else {
-          pander::pandoc.table(res, split.table=Inf,justify=text.align.pandoc, style="grid")
+        pander::pandoc.table(res, split.table=Inf,justify=text.align.pandoc, style="grid")
       }
     }
   }
