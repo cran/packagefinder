@@ -4,10 +4,21 @@
 \alias{findPackage}
 \title{Searching for packages on CRAN}
 \usage{
-findPackage(keywords, mode = "or", case.sensitive = FALSE,
-  always.sensitive = NULL, weights = c(2, 2, 1, 2), display = "viewer",
-  results.longdesc = FALSE, limit.results = 15, silent = FALSE,
-  index = NULL, advanced.ranking = TRUE, return.df = FALSE)
+findPackage(
+  keywords,
+  mode = "or",
+  case.sensitive = FALSE,
+  always.sensitive = NULL,
+  weights = c(2, 2, 1, 2),
+  display = "viewer",
+  results.longdesc = FALSE,
+  limit.results = 15,
+  silent = FALSE,
+  index = NULL,
+  advanced.ranking = TRUE,
+  return.df = FALSE,
+  clipboard = FALSE
+)
 }
 \arguments{
 \item{keywords}{A vector of keywords to be searched for. Instead of separate search terms, \code{keywords} can also be a query like \code{"meta AND regression"}. In this case the \code{mode} argument is ignored. Only one type of logical operator (either \code{and} or \code{and}) may be used in a query; operators are not case-sensitive.}
@@ -20,19 +31,21 @@ findPackage(keywords, mode = "or", case.sensitive = FALSE,
 
 \item{weights}{A numeric vector describing how search hits in different fields of the a package's data shall be weighted. The first three elements of the vector are the weights assigned to hits in the package's \emph{title}, \emph{short description} and \emph{long description}, respectively. The fourth element is a factor applied to the overall score of a search hit if all search terms from the \code{keywords} argument are found (obviously only meaningful in \code{"or"} mode). All weights must be 1 or larger.}
 
-\item{display}{Describes where the search results shall be shown. Either \code{"viewer"}, \code{"console"} or \code{"browser"}. If \code{"viewer"}, the results are shown in RStudio's Viewer pane if the RStudio IDE is being used. If \code{results = "console"} the search results are shown as a text table in the R console. \code{results = "browser"} shows the search results in the web browser (currently only available on Windows-based platforms).}
+\item{display}{Describes where the search results shall be shown. Either \code{"viewer"}, \code{"console"} or \code{"browser"}. If \code{"viewer"}, the results are shown in RStudio's Viewer pane if the RStudio IDE is being used. If \code{results = "console"} the search results are shown as a text table in the R console. \code{results = "browser"} shows the search results in the web browser.}
 
 \item{results.longdesc}{Indicates whether the packages' long descriptions shall also be included in the search results. Given the length of some long decsriptions this may make the search results harder to read.}
 
 \item{limit.results}{The maximum number of matches presented in the search results; choose a negative number to display all results}
 
-\item{silent}{Indicates whether details of the user's search query are repeated in the console.}
+\item{silent}{Indicates whether any visible output is produced. Use \code{silent = TRUE} if you are only interested in getting the search results as a dataframe (with \code{return.df = TRUE}).}
 
 \item{index}{Either a path (or URL) to a search index, or a search index that is already loaded. If no index is provided, \code{findPackage()} creates an ad hoc search index.}
 
 \item{advanced.ranking}{Indicates if the ranking of search results shall be based on weights taking into account the inverse frequencies of the different search terms across all packages and the length of the matches relative to the texts they were found in. Usually, using advanced ranking (\code{advanced.ranking = TRUE}, default) gives more relevant results, especially in \code{"or"} mode when the search terms differ strongly in their frequency of occurrence across packages.}
 
 \item{return.df}{If \code{TRUE}, \code{findPackage()} returns a dataframe with the results, otherwise there is no return value. Default is \code{FALSE}.}
+
+\item{clipboard}{If \code{TRUE}, \code{findPackage()} copies the results to the clipboard.}
 }
 \value{
 The search results as a dataframe, if \code{df.return = TRUE}.
@@ -58,7 +71,9 @@ searchindex <- buildIndex()
 findPackage(keywords=c("regression", "linear"), mode="and",
    always.sensitive="GLM", index=searchindex)
 
-# Or in the browser (Windows only):
+findPackage("meta and regression", display="console")
+
+# Alternatively, show results in browser
 # findPackage("meta and regression", display="browser")
 
 my.results <- findPackage("meta AND regression")
