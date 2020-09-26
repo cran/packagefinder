@@ -1,11 +1,11 @@
-95da131285912899721db50218ab845f *DESCRIPTION
+df7cad18b0adeb556a1a396a73dddec2 *DESCRIPTION
 5e153c848e80550400825527861a2eb5 *NAMESPACE
-ccbcde9fcf0ca2cff090dab18c1c1526 *NEWS.md
+8e56c1488bfd245ca29cf7dc7d5c907e *NEWS.md
 b09aabfea3825729f97e8814ff07749f *R/addin.r
 3700a736c40542c73dddb9d512fde18d *R/addintools.r
 ec78eb28125fb4ef2ae5ecdbbad81905 *R/htmltools.r
-90b118a52582bff9b06b429c8608d1e2 *R/packagefinder.r
-af72b4e5402f83ccc82fc553c2bfadb8 *README.md
+b99244c265c0bcd5e048ad153269cbed *R/packagefinder.r
+2faa80bd976c7e1ad70f515a9eab0c7f *README.md
 3b2df969f23fca2314421e67d18e21a0 *inst/rstudio/addins.dcf
 4d5a917f663a74747a96c72985cc6409 *man/buildIndex.Rd
 8183362651a685b5e496fd996d49568d *man/exploreFields.Rd
