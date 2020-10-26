@@ -1,10 +1,10 @@
-df7cad18b0adeb556a1a396a73dddec2 *DESCRIPTION
+095f4e96c0e27be866428bd59684d9a2 *DESCRIPTION
 5e153c848e80550400825527861a2eb5 *NAMESPACE
-8e56c1488bfd245ca29cf7dc7d5c907e *NEWS.md
-b09aabfea3825729f97e8814ff07749f *R/addin.r
-3700a736c40542c73dddb9d512fde18d *R/addintools.r
-ec78eb28125fb4ef2ae5ecdbbad81905 *R/htmltools.r
-b99244c265c0bcd5e048ad153269cbed *R/packagefinder.r
+e2b13d203abbed755484399dfca8fd4b *NEWS.md
+b0dad0d2c9a35f76128b463e3bea95a1 *R/addin.r
+84fc310570a000ec320e76cebe04c33a *R/addintools.r
+c352db35170700290aa3885c64fd7899 *R/htmltools.r
+52f5705b8d83834b95d5e969141c7f8e *R/packagefinder.r
 2faa80bd976c7e1ad70f515a9eab0c7f *README.md
 3b2df969f23fca2314421e67d18e21a0 *inst/rstudio/addins.dcf
 4d5a917f663a74747a96c72985cc6409 *man/buildIndex.Rd
@@ -13,7 +13,7 @@ ec55ecc74823d539118c8d4f963c99ad *man/figures/addin.png
 4eba4f0cf0f7355991392a2669aa49ec *man/figures/addin2.png
 2970220334c9154ca2cb5f3fe04df787 *man/figures/packagefinder.png
 718994a93b92fa0f8549ded126024989 *man/figures/screenshot_web.png
-6fde48589791265b719c7cf0fbc7146e *man/findPackage.Rd
+c1f44655cbbfbf9d21495c9a26abbef8 *man/findPackage.Rd
 22d7be2c6121777f71deece4af3527ce *man/fp.Rd
 fcb7b9e752ccef1e8fd95248ceed3760 *man/go.Rd
 3e9862c4d223c72868a8928b8aae8d59 *man/lastResults.Rd
