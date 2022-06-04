@@ -1,3 +1,10 @@
+# packagefinder 0.3.3
+
+## Minor changes
+* Displays error message if CRAN or CRAN logs are not available.
+
+
+
 # packagefinder 0.3.2
 
 ## Minor changes

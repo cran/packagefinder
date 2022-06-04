@@ -31,13 +31,13 @@ NULL
 ###   PACKAGE PACKAGEFINDER
 ###
 ###   Author and maintainer: Joachim Zuckarelli (joachim@zuckarelli.de)
-###   Version 0.3.2
+###   Version 0.3.3
 ###
 
 
 
 .onAttach <- function(libname, pkgname){
-  packageStartupMessage(crayon::blue("You are working with", crayon::bold("\npackagefinder"), "version 0.3.2\n"))
+  packageStartupMessage(crayon::blue("You are working with", crayon::bold("\npackagefinder"), "version 0.3.3\n"))
   pf<-tools::CRAN_package_db()
   if("packagefinder" %in% pf$Package) {
     if(numeric_version(pf$Version[pf$Package=="packagefinder"]) < numeric_version(utils::packageVersion("packagefinder"))) packageStartupMessage(crayon::red("Please update packagefinder to the newest version", numeric_version(pf$Version[pf$Package=="packagefinder"]), "!\n\n"))
@@ -131,62 +131,65 @@ makeIndexAvailable <- function(address) {
 #' @import tools
 #' @export
 buildIndex <- function(filename="", download.stats = FALSE) {
-  ind <- tools::CRAN_package_db()
-  df <- data.frame(NAME=rep("", nrow(ind)), stringsAsFactors = FALSE)
-  df$NAME <- ind$Package
-  df$URL <- paste0("https://CRAN.R-project.org/package=", df[,1])
-  df$DESC_SHORT <- ind$Title
-  df$DESC_LONG <- ind$Description
-  df$DATE <- ind$Published
-  df$DOWNL_MONTH <- NA  # Dowloads last month
-  df$DOWNL_TOTAL <- NA  # Dowloads total
-  df$MANUAL <- paste0("https://cloud.r-project.org/web/packages/", df[,1], "/", df[,1], ".pdf") # Link to manual
+  ind <- NULL
+  searchindex <- NULL
+  tryCatch(suppressWarnings(ind<-tools::CRAN_package_db()), error = function(e) { cat ("CRAN is currently not available. Please try again later.\n")})
+  if(!is.null(ind)) {
+    df <- data.frame(NAME=rep("", nrow(ind)), stringsAsFactors = FALSE)
+    df$NAME <- ind$Package
+    df$URL <- paste0("https://CRAN.R-project.org/package=", df[,1])
+    df$DESC_SHORT <- ind$Title
+    df$DESC_LONG <- ind$Description
+    df$DATE <- ind$Published
+    df$DOWNL_MONTH <- NA  # Dowloads last month
+    df$DOWNL_TOTAL <- NA  # Dowloads total
+    df$MANUAL <- paste0("https://cloud.r-project.org/web/packages/", df[,1], "/", df[,1], ".pdf") # Link to manual
 
-  df$VERSION <- ind$Version
-  df$MAINTAINER <- ind$Maintainer
-  df$AUTHORS <- ind$`Authors@R`
-  df$AUTHOR <- ind$Author
-  df$LICENSE <- ind$License
-  df$IMPORTS <- ind$Imports
-  df$ENHANCES <- ind$Enhances
-  df$DEPENDS <- ind$Depends
-  df$SUGGESTS <- ind$Suggests
-  df$REVERSE.DEPENDS <- ind$`Reverse depends`
-  df$REVERSE.SUGGESTS <- ind$`Reverse suggests`
-  df$REVERSE.ENHANCES <- ind$`Reverse enhances`
-  df$BUGREPORTS <- ind$BugReports
-  df$URL <- ind$URL
-  df$COPYRIGHT <- ind$Copyright
-  df$CONTACT <- ind$Contact
-  df$NOTE <- ind$Note
-  df$MAILINGLIST <- ind$MailingList
+    df$VERSION <- ind$Version
+    df$MAINTAINER <- ind$Maintainer
+    df$AUTHORS <- ind$`Authors@R`
+    df$AUTHOR <- ind$Author
+    df$LICENSE <- ind$License
+    df$IMPORTS <- ind$Imports
+    df$ENHANCES <- ind$Enhances
+    df$DEPENDS <- ind$Depends
+    df$SUGGESTS <- ind$Suggests
+    df$REVERSE.DEPENDS <- ind$`Reverse depends`
+    df$REVERSE.SUGGESTS <- ind$`Reverse suggests`
+    df$REVERSE.ENHANCES <- ind$`Reverse enhances`
+    df$BUGREPORTS <- ind$BugReports
+    df$URL <- ind$URL
+    df$COPYRIGHT <- ind$Copyright
+    df$CONTACT <- ind$Contact
+    df$NOTE <- ind$Note
+    df$MAILINGLIST <- ind$MailingList
 
 
-  if(download.stats == TRUE) {
-    prog <- utils::txtProgressBar(min=0, max=100, style=3)
-
-    for(i in 1:nrow(df)) {
-      if(i %% 100 == 0) utils::setTxtProgressBar(prog, i/nrow(df)*100)
-      json <- jsonlite::fromJSON(paste0("https://cranlogs.r-pkg.org/downloads/total/last-month/", df[i,1]))
-      if ("downloads" %in% names(json)) df[i,6]<-json$downloads
-      json <- jsonlite::fromJSON(paste0("https://cranlogs.r-pkg.org/downloads/total/1970-01-01:", as.Date(Sys.time()), "/", df[i,1]))
-      if ("downloads" %in% names(json)) df[i,7]<-json$downloads
+    if(download.stats == TRUE) {
+      prog <- utils::txtProgressBar(min=0, max=100, style=3)
+      tryCatch(suppressWarnings(
+        for(i in 1:nrow(df)) {
+          if(i %% 100 == 0) utils::setTxtProgressBar(prog, i/nrow(df)*100)
+          json <- jsonlite::fromJSON(paste0("https://cranlogs.r-pkg.org/downloads/total/last-month/", df[i,1]))
+          if ("downloads" %in% names(json)) df[i,6]<-json$downloads
+          json <- jsonlite::fromJSON(paste0("https://cranlogs.r-pkg.org/downloads/total/1970-01-01:", as.Date(Sys.time()), "/", df[i,1]))
+          if ("downloads" %in% names(json)) df[i,7]<-json$downloads
+        }
+      ), error = function(e) { cat ("CRAN logs for download numbers are currently not available. Please try again later.\n")})
+      utils::setTxtProgressBar(prog, 100)
+      cat("\n")
     }
 
-    utils::setTxtProgressBar(prog, 100)
-    cat("\n")
+    date.time <- Sys.time()
+    searchindex <- list(df, date.time)
+    names(searchindex)<-c("index", "date.time")
+
+    # Save index to file
+    if(filename != "") {
+      save(searchindex, file=filename)
+      cat("\nIndex is ready.\n")
+    }
   }
-
-  date.time <- Sys.time()
-  searchindex <- list(df, date.time)
-  names(searchindex)<-c("index", "date.time")
-
-  # Save index to file
-  if(filename != "") {
-    save(searchindex, file=filename)
-    cat("\nIndex is ready.\n")
-  }
-
   invisible(searchindex)
 }
 
@@ -285,7 +288,7 @@ findPackage<-function(keywords = NULL, query = NULL, mode = "or", case.sensitive
 
   time.searchstart<-Sys.time()
   searchindex <- makeIndexAvailable(index)
-  if(class(searchindex) == "list"){
+  if(inherits(searchindex, "list")){
     score<-c()
 
     num.keywords = length(keywords)
@@ -429,7 +432,7 @@ findPackage<-function(keywords = NULL, query = NULL, mode = "or", case.sensitive
       if(!silent) cat("\nNo results found.")
     }
   } else {
-    stop("Search index is not available. Create a search index with buidIndex().")
+    stop("Search index is not available. Consider creating a search index manually with buidIndex().")
   }
 }
 
@@ -477,7 +480,7 @@ exploreFields <- function(term, fields=c("Name", "Description", "LongDescription
   chk<-tolower(fields) %in% tolower(fields.df$names)
   if(sum(chk) == length(fields)) {
     searchindex <- makeIndexAvailable(index)
-    if(class(searchindex) == "list"){
+    if(inherits(searchindex, "list")){
       if(match %in% c("like", "exact")) {
 
         time.searchstart<-Sys.time()
@@ -555,7 +558,7 @@ exploreFields <- function(term, fields=c("Name", "Description", "LongDescription
         stop(paste0("'", mode,"' is not a valid value for argument 'match'. Choose either 'like' or 'exact' depending on your search strategy."))
       }
     } else {
-      stop("Search index is not available. Create a search index with buidIndex().")
+      stop("Search index is not available. Consider creating a search index manually with buidIndex().")
     }
   } else {
     fld <- "fields "
@@ -647,7 +650,7 @@ lastResults <- function(display = "viewer") {
 #' @export
 whatsNew <- function(last.days=0, brief = TRUE, index = NULL) {
   searchindex <- makeIndexAvailable(index)
-  if(class(searchindex) == "list"){
+  if(inherits(searchindex, "list")){
     if(last.days>=0) {
       num <- 0
       date.to <- lubridate::today()-last.days
@@ -676,7 +679,7 @@ whatsNew <- function(last.days=0, brief = TRUE, index = NULL) {
     }
   }
   else {
-    stop("Search index is not available. Create a search index with buidIndex().")
+    stop("Search index is not available. Consider creating a search index manually with buidIndex().")
   }
 }
 
@@ -698,7 +701,7 @@ whatsNew <- function(last.days=0, brief = TRUE, index = NULL) {
 #' @export
 go <- function(package, where.to = "details", index = NULL) {
   searchindex <- makeIndexAvailable(index)
-  if(class(searchindex) == "list"){
+  if(inherits(searchindex, "list")){
     go.num <- checkPackageValidity(searchindex, package)
     if(!is.null(go.num)) {
       if(!(tolower(where.to) %in% c("install", "website", "manual", "details"))) {
@@ -738,7 +741,7 @@ go <- function(package, where.to = "details", index = NULL) {
       stop(paste0("Package ", as.character(package), " does not exist. Please check the package GO number / name."))
     }
   } else {
-    stop("Search index is not available. Create a search index with buidIndex().")
+    stop("Search index is not available. Consider creating a search index manually with buidIndex().")
   }
 }
 
@@ -790,7 +793,7 @@ packageElement <- function(field, value, bold.field=FALSE, bold.value=FALSE, lin
 #' @export
 packageDetails <- function(package, brief=FALSE, show.tip=TRUE, index=NULL) {
   searchindex <- makeIndexAvailable(index)
-  if(class(searchindex) == "list"){
+  if(inherits(searchindex, "list")){
     go.num <- checkPackageValidity(searchindex, package)
     if(!is.null(go.num)) {
       cat(crayon::cyan("\nPackage", crayon::bold(searchindex$index$NAME[go.num]), "\n\n"), sep="")
@@ -825,6 +828,6 @@ packageDetails <- function(package, brief=FALSE, show.tip=TRUE, index=NULL) {
     }
   }
   else {
-    stop("Search index is not available. Create a search index with buidIndex().")
+    stop("Search index is not available. Consider creating a search index manually with buidIndex().")
   }
 }
