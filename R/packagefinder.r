@@ -38,10 +38,13 @@ NULL
 
 .onAttach <- function(libname, pkgname){
   packageStartupMessage(crayon::blue("You are working with", crayon::bold("\npackagefinder"), "version 0.3.3\n"))
-  pf<-tools::CRAN_package_db()
-  if("packagefinder" %in% pf$Package) {
-    if(numeric_version(pf$Version[pf$Package=="packagefinder"]) < numeric_version(utils::packageVersion("packagefinder"))) packageStartupMessage(crayon::red("Please update packagefinder to the newest version", numeric_version(pf$Version[pf$Package=="packagefinder"]), "!\n\n"))
-    else packageStartupMessage("\n")
+
+  tryCatch(suppressWarnings(pf<-tools::CRAN_package_db()), error = function(e) {})
+  if(!is.null(pf)) {
+    if("packagefinder" %in% pf$Package) {
+      if(numeric_version(pf$Version[pf$Package=="packagefinder"]) < numeric_version(utils::packageVersion("packagefinder"))) packageStartupMessage(crayon::red("Please update packagefinder to the newest version", numeric_version(pf$Version[pf$Package=="packagefinder"]), "!\n\n"))
+      else packageStartupMessage("\n")
+    }
   }
   packageStartupMessage(crayon::green("Getting started:\n\n"))
   packageStartupMessage(crayon::silver("* Use", crayon::cyan("findPackage(keywords, mode)"), "to search CRAN for packages, e.g.",crayon::italic("findPackage(c(\"meta\",\"regression\"), \"and\")")," or just ", crayon::italic("findPackage(\"meta and regression\")"),".\n\n"), sep="")

@@ -1,3 +1,10 @@
+# packagefinder 0.3.4
+
+## Minor changes
+* Loading of package list from internet modified to comply with CRAN rules.
+
+
+
 # packagefinder 0.3.3
 
 ## Minor changes
