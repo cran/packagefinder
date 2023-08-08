@@ -31,13 +31,13 @@ NULL
 ###   PACKAGE PACKAGEFINDER
 ###
 ###   Author and maintainer: Joachim Zuckarelli (joachim@zuckarelli.de)
-###   Version 0.3.3
+###   Version 0.3.5
 ###
 
 
 
 .onAttach <- function(libname, pkgname){
-  packageStartupMessage(crayon::blue("You are working with", crayon::bold("\npackagefinder"), "version 0.3.3\n"))
+  packageStartupMessage(crayon::blue("You are working with", crayon::bold("\npackagefinder"), "version 0.3.5\n"))
 
   tryCatch(suppressWarnings(pf<-tools::CRAN_package_db()), error = function(e) {})
   if(!is.null(pf)) {
@@ -657,25 +657,30 @@ whatsNew <- function(last.days=0, brief = TRUE, index = NULL) {
     if(last.days>=0) {
       num <- 0
       date.to <- lubridate::today()-last.days
-      ind <- searchindex$index[as.Date(lubridate::parse_date_time(searchindex$index$DATE, "%Y-%m-%d"))>=date.to,]
-      ind <- ind[order(ind$DATE,decreasing=TRUE),]
-      for(i in unique(ind$DATE)) {
-        ind.date <- ind[ind$DATE==i,]
-        header <- "\nPublished "
-        if(i==lubridate::today()) header <- paste0(header, "today")
-        else {
-          if(i== lubridate::today()-1) header <- paste0(header, "yesterday")
-          else header <- paste0(header, "on ", i)
-        }
+      ind <- searchindex$index[!is.na(searchindex$index$DATE) & as.Date(lubridate::parse_date_time(searchindex$index$DATE, "%Y-%m-%d"))>=date.to,]
+      if(!all(is.na(ind))) {
+        ind <- ind[order(ind$DATE,decreasing=TRUE),]
+        for(i in unique(ind$DATE)) {
+          ind.date <- ind[ind$DATE==i,]
+          header <- "\nPublished "
+          if(i==lubridate::today()) header <- paste0(header, "today")
+          else {
+            if(i== lubridate::today()-1) header <- paste0(header, "yesterday")
+            else header <- paste0(header, "on ", i)
+          }
 
-        cat(crayon::magenta(crayon::bold(header)), crayon::magenta(paste0(" (",NROW(ind.date), " packages):\n")), sep="")
+          cat(crayon::magenta(crayon::bold(header)), crayon::magenta(paste0(" (",NROW(ind.date), " packages):\n")), sep="")
 
-        for(f in 1:NROW(ind.date)) {
-          packageDetails(as.integer(row.names(ind.date)[f]), brief=brief, show.tip = FALSE, index=searchindex)
-          num <- num + 1
+          for(f in 1:NROW(ind.date)) {
+            packageDetails(as.integer(row.names(ind.date)[f]), brief=brief, show.tip = FALSE, index=searchindex)
+            num <- num + 1
+          }
         }
+        invisible(num)
       }
-      invisible(num)
+      else {
+        cat(crayon::magenta(paste0("\nNo new packages in the last ", last.days, " days.\n")))
+      }
     }
     else {
       stop("Argument last.days must be equal to or larger than zero.")

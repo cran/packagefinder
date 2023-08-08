@@ -1,3 +1,10 @@
+# packagefinder 0.3.5
+
+## Bug fix
+* whatsNew() does not give error when package date is NA.
+
+
+
 # packagefinder 0.3.4
 
 ## Minor changes
